@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PTLab_2.Models;
 using System.Diagnostics;
 
@@ -7,15 +8,16 @@ namespace PTLab_2.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
+        private  Hardware_storeContext _db;
         public HomeController(ILogger<HomeController> logger)
         {
+            _db = new Hardware_storeContext();
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            return View(await _db.Products.ToListAsync());
         }
         public IActionResult LoginPage()
         {

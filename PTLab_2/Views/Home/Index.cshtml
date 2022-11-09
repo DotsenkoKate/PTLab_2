@@ -1,8 +1,24 @@
-﻿@{
+﻿@model IEnumerable<PTLab_2.Models.Product>
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome to our store</h1>
-    
+<table class="table">
+    <tr><td>Наименование</td><td>Цена</td></tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Price</td>
+            <td>
+                <a asp-action="" asp-controller="Home" asp-route-id="@item.Id">
+                     <input type="submit" value="Добавить" />
+                </a>
+            </td>
+        </tr>
+        
+    }
+</table>
 </div>
