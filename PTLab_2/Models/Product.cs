@@ -1,9 +1,12 @@
-namespace PTLab_2.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class Product
+namespace PTLab_2.Models
 {
-    public Guid Id { get; set; }
-    public string? Name { get; set; }
-    public string? Price { get; set; }
- 
+    public partial class Product
+    {
+        public int Id { get; set; }
+        public char? Name { get; set; }
+        public float? Price { get; set; }
+    }
 }

@@ -1,11 +1,14 @@
-namespace PTLab_2.Models;
+﻿using System;
+using System.Collections.Generic;
 
-public class Customer
+namespace PTLab_2.Models
 {
-    public Guid Id { get; set; }
-    public string Login { get; set; }
-    public string Password { get; set; }
-    public string? Name { get; set; }
-    public string? Purchase { get; set; }
-
+    public partial class Customer
+    {
+        public int Id { get; set; }
+        public char? Name { get; set; }
+        public char Login { get; set; }
+        public int? Purchase { get; set; }
+        public char Password { get; set; }
+    }
 }
