@@ -12,10 +12,11 @@
         <tr>
             <td>@item.Name</td>
             <td>@item.Price</td>
-            <td>  
-                <a asp-action="Cart" asp-controller="Home" asp-route-id="@item.Id">
-                     <input type="submit" value="Добавить в корзину"/>
+            <td>
+                <a asp-action="AddToCart" asp-controller="Home" asp-route-id="@item.Id" asp-route-id_customer="1">
+                    <input type="submit" value="Добавить в корзину"/>
                 </a>
+               
             </td>
         </tr>
         

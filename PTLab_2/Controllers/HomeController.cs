@@ -19,19 +19,40 @@ namespace PTLab_2.Controllers
         {
             return View(await _db.Products.ToListAsync());
         }
-        public IActionResult Cart(string id)
+        public async Task<IActionResult> Cart()
         {
-            return View();
+            int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
+            return View(await _db.Carts.ToListAsync());
         }
-        
-        
-        
+        public Product GetPriceAndNameProduct(string id_product)
+        {
+            Product? product = _db.Products.FirstOrDefault(c => c.Id == Convert.ToInt32(id_product));
+            return product;
+        }
         public IActionResult Privacy()
         {
             return View();
         }
+
+
+        public IActionResult AddToCart(int id)
+        {
+            int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
+            Product? item;
+            item = _db.Products.FirstOrDefault(c => c.Id == id);
+            Cart cart = new Cart
+            {
+                //КОСТЫЛЬ
+                Id = 6,
+                CustomerId = id_customer,
+                ProductId = item.Id,
+                Quantity = 1,
+            };
+            _db.Carts.Add(cart);
+            _db.SaveChanges();
         
-        
+        return RedirectToAction("Cart");
+    }
         
         public IActionResult Login()
         {
@@ -47,7 +68,9 @@ namespace PTLab_2.Controllers
                 customer = _db.Customers.FirstOrDefault(c => c.Login == login);
                 if (customer.Password == password)
                 {
-                    return RedirectToAction("Index", customer);
+                    HttpContext.Session.SetString("id",customer.Id.ToString());
+
+                    return RedirectToAction("Index", customer.Id);
                 }
                 else throw new Exception();
             }
@@ -59,12 +82,13 @@ namespace PTLab_2.Controllers
             
             
         }
-
-
+        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
     }
 } 
