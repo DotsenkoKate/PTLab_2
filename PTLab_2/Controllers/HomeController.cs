@@ -19,15 +19,47 @@ namespace PTLab_2.Controllers
         {
             return View(await _db.Products.ToListAsync());
         }
-        public IActionResult LoginPage()
+        public IActionResult Cart(string id)
         {
             return View();
         }
+        
+        
+        
         public IActionResult Privacy()
         {
             return View();
         }
         
+        
+        
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(string login, string password)
+        {
+            try
+            {
+                Customer? customer;
+                customer = _db.Customers.FirstOrDefault(c => c.Login == login);
+                if (customer.Password == password)
+                {
+                    return RedirectToAction("Index", customer);
+                }
+                else throw new Exception();
+            }
+            catch (Exception e)
+            {
+                ViewData["Message"] = "Пользователь не найден!";
+                return View();
+            }
+            
+            
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

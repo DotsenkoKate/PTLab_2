@@ -18,6 +18,7 @@ namespace PTLab_2.Models
 
         public virtual DbSet<Customer> Customers { get; set; } = null!;
         public virtual DbSet<Product> Products { get; set; } = null!;
+        public virtual DbSet<Cart> Carts { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -62,6 +63,25 @@ namespace PTLab_2.Models
                     .HasColumnName("name");
 
                 entity.Property(e => e.Price).HasColumnName("price");
+            });
+            modelBuilder.Entity<Cart>(entity =>
+            {
+                entity.ToTable("Cart");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Quantity)
+                    .HasColumnType("int")
+                    .HasColumnName("quantity");
+
+                entity.Property(e => e.CustomerId)
+                    .HasColumnType("int")
+                    .HasColumnName("customer_id");
+
+                entity.Property(e => e.ProductId)
+                    .HasColumnType("int")
+                    .HasColumnName("product_id");
+
             });
 
             OnModelCreatingPartial(modelBuilder);

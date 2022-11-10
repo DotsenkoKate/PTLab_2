@@ -1,0 +1,28 @@
+@{
+    ViewData["Title"] = "Корзина";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Количество</th>
+            <th>Наименование</th>
+            <th class="text-right">Цена</th>
+            <th class="text-right">Сумма</th>
+        </tr>
+    </thead>
+    <td></td>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-right">Итого:</td>
+            <td class="text-right">
+                Много
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+<div class="text-center">
+    <a class="btn btn-primary" asp-action="Index">Продолжить покупки</a>
+</div>
+
