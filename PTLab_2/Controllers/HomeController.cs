@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PTLab_2.Models;
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
 namespace PTLab_2.Controllers
 {
@@ -22,12 +23,24 @@ namespace PTLab_2.Controllers
         public async Task<IActionResult> Cart()
         {
             int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
+            List<Product> products = new List<Product>();
+            products = _db.Products.ToList();
+            
+            List<Cart> carts = new List<Cart>();
+            carts = _db.Carts.ToList();
+            int discount = GetDiscount((_db.Customers.FirstOrDefault(c => c.Id == Convert.ToInt32(id_customer))).Purchase);
+            
+            
+            
+            
             return View(await _db.Carts.ToListAsync());
         }
-        public Product GetPriceAndNameProduct(string id_product)
+        public int GetDiscount(int purchase)
         {
-            Product? product = _db.Products.FirstOrDefault(c => c.Id == Convert.ToInt32(id_product));
-            return product;
+            int discount = purchase / 10;
+            if (discount > 10) discount = 10;
+            if (discount < 1) discount = 1;
+            return discount;
         }
         public IActionResult Privacy()
         {
@@ -42,21 +55,66 @@ namespace PTLab_2.Controllers
             item = _db.Products.FirstOrDefault(c => c.Id == id);
             Cart cart = new Cart
             {
-                //КОСТЫЛЬ
-                Id = 6,
                 CustomerId = id_customer,
                 ProductId = item.Id,
                 Quantity = 1,
             };
+            
             _db.Carts.Add(cart);
             _db.SaveChanges();
         
         return RedirectToAction("Cart");
     }
         
+        public IActionResult Buy(int id, int quantity)
+        {
+            Console.WriteLine(quantity);
+            int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
+            Product? item;
+            item = _db.Products.FirstOrDefault(c => c.Id == id);
+            var tmp = _db.Customers.FirstOrDefault(c => c.Id == Convert.ToInt32(id_customer)).Purchase;
+            int discount = GetDiscount(tmp);
+            Purchase purchase = new Purchase
+            {
+                CustomerId = id_customer,
+                Quantity = quantity,
+                ProductName = item.Name,
+                Price = item.Price,
+                Discount = discount,
+            };
+            _db.Purchases.Add(purchase);
+            _db.SaveChanges();
+        
+            return RedirectToAction("Purchase");
+        }
+        
         public IActionResult Login()
         {
             return View();
+        }
+        public  IActionResult Purchase()
+        {
+            int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
+            var res =_db.Purchases.FirstOrDefault(c => c.CustomerId == Convert.ToInt32(id_customer));
+            List<Purchase> purchase = new List<Purchase>();
+            purchase.Add(res);
+            return View(purchase);
+        }
+        public ActionResult BuyItem(int id)
+        {
+            Purchase purchase = _db.Purchases.FirstOrDefault(c => c.Id == id);
+            int tmp = purchase.Quantity;
+            if (purchase != null)
+            {
+                _db.Purchases.Remove(purchase);
+                _db.SaveChanges();
+            }
+            int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
+            Customer customer = _db.Customers.FirstOrDefault(c => c.Id == id_customer);
+            customer.Purchase += tmp;
+            _db.Customers.Update(customer);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
         }
 
         [HttpPost]

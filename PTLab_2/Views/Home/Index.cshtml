@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Каталог";
 }
-
+<!--
 <div class="text-center">
     <h1 class="display-4">Welcome to our store</h1>
 <table class="table">
@@ -13,7 +13,7 @@
             <td>@item.Name</td>
             <td>@item.Price</td>
             <td>
-                <a asp-action="AddToCart" asp-controller="Home" asp-route-id="@item.Id" asp-route-id_customer="1">
+                <a asp-action="AddToCart" asp-controller="Home" asp-route-id="@item.Id" >
                     <input type="submit" value="Добавить в корзину"/>
                 </a>
                
@@ -22,4 +22,27 @@
         
     }
 </table>
+</div>
+-->
+<div class="text-center">
+    <h1 class="display-4">Welcome to our store</h1>
+    <table class="table">
+        <tr><td>Наименование</td><td>Цена</td><td>Количество</td><td></td><td></td>
+        @foreach (var item in Model)
+        {
+            <tr>
+                
+                <td>@item.Name</td>
+                <td>@item.Price</td>
+                <form action="Buy">
+                    <td> <input type="hidden" name="id" value="@item.Id"/></td>
+                    <td><input type="number" size="2" name="quantity" min="0" max="100"></td>
+                    <td>
+                        <input type="submit" value="Купить"/>
+                    </td>
+                </form>
+            </tr>
+        
+        }
+    </table>
 </div>

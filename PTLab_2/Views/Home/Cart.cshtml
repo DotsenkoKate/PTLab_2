@@ -2,8 +2,7 @@
 @{
     ViewData["Title"] = "Корзина";
 }
-
-<table class="table">
+<table class="table" id="cartlist">
     <thead>
         <tr>
             <th>Количество</th>
@@ -16,23 +15,23 @@
 {
     <tr>
         <td><input type="number" size="2" id="quantity" min="0" max="100" value=@item.Quantity></td>
-        <td>@item.ProductId</td>
-        <td>@item.ProductId</td>
-        <td> </td>
+        <td >@item.ProductId</td>
+        <td id="price">@item.ProductId</td>
+        <td id="result">@(@item.Quantity*@item.ProductId)</td>
     </tr>
 }
     <tfoot>
-        <tr>
-            <td colspan="3" class="text-right">Итого:</td>
-            <td class="text-right">
-                Много
-            </td>
-        </tr>
+    <tr>
+        <td colspan="3" class="text-right">Итого:</td>
+        <td class="text-right" id="total"></td>
+    </tr>
     </tfoot>
+ 
 </table>
 
 <div class="text-center">
     <a class="btn btn-primary" asp-action="Index">Продолжить покупки</a>
 </div>
+
 
 
