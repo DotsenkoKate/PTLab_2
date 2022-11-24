@@ -1,37 +1,55 @@
-@model IEnumerable<PTLab_2.Models.Cart>
+@model IEnumerable<PTLab_2.Models.Purchase>
 @{
     ViewData["Title"] = "Корзина";
 }
-<table class="table" id="cartlist">
-    <thead>
+
+<form action="BuyItem2" class="text-center">
+    <table id="cart" class="table">
+        
+        <thead>
         <tr>
-            <th>Количество</th>
             <th>Наименование</th>
+            <th>Количество</th>
             <th class="text-right">Цена</th>
             <th class="text-right">Сумма</th>
         </tr>
-    </thead>
-@foreach (var item in Model)
-{
-    <tr>
-        <td><input type="number" size="2" id="quantity" min="0" max="100" value=@item.Quantity></td>
-        <td >@item.ProductId</td>
-        <td id="price">@item.ProductId</td>
-        <td id="result">@(@item.Quantity*@item.ProductId)</td>
-    </tr>
-}
-    <tfoot>
-    <tr>
-        <td colspan="3" class="text-right">Итого:</td>
-        <td class="text-right" id="total"></td>
-    </tr>
-    </tfoot>
- 
-</table>
+        </thead>
+        <tbody>
 
-<div class="text-center">
-    <a class="btn btn-primary" asp-action="Index">Продолжить покупки</a>
-</div>
+        @foreach (var item in Model)
+        {
 
+            <tr>
+                <td >@item.ProductName</td>
+                <td>@item.Quantity</td>
+                <td id="price">@item.Price</td>
+                <td id="result">@(@item.Quantity * @item.Price)</td>
+            </tr>
+            
+            <input type="hidden" name="id" value="@item.Id"/>
+            <input type="hidden" id="discount" value="@item.Discount"/>
+        }
+        </tbody>
+        <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td class="text-right" id="discountCart"> Итог со скидкой </td>
+            <td class="text-right" id="total"></td>
+        </tr>
+        </tfoot>
+        
+    </table>
 
-
+    <input class="btn btn-primary" type="submit" value="Купить" onclick="alert('Cпасибо за покупку!\n Ваш заказ уже едет к вам:)')"/>
+    <a class="btn btn-secondary" asp-action="Index">Продолжить покупки</a>
+        </form>
+<script>
+    	const tds = document.querySelectorAll('table tbody tr td:last-child');
+    	let sum = 0;
+    	for(const {textContent} of tds) sum += Number(textContent);
+        let discount = document.getElementById('discount').value;
+        sum = sum - (sum*discount*0.01);
+        discountCart.textContent += discount + "%:";
+    	total.textContent = sum;
+</script>

@@ -22,31 +22,42 @@ namespace PTLab_2.Controllers
         }
         public async Task<IActionResult> Cart()
         {
-            int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
+           /* int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
             List<Product> products = new List<Product>();
             products = _db.Products.ToList();
             
             List<Cart> carts = new List<Cart>();
             carts = _db.Carts.ToList();
             int discount = GetDiscount((_db.Customers.FirstOrDefault(c => c.Id == Convert.ToInt32(id_customer))).Purchase);
-            
-            
-            
-            
-            return View(await _db.Carts.ToListAsync());
+            List <Purchase> Test = new List<Purchase>();
+            Test = Usercart();*/
+            return View(await _db.Purchases.ToListAsync());
         }
+        
+        
         public int GetDiscount(int purchase)
         {
-            int discount = purchase / 10;
-            if (discount > 10) discount = 10;
+            int discount = purchase / 100;
+            if (discount > 15) discount = 15;
             if (discount < 1) discount = 1;
             return discount;
         }
-        public IActionResult Privacy()
+       public List <Purchase> Usercart()
         {
-            return View();
+            int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
+            List<Purchase> ListCart = new List<Purchase>();
+            using (_db = new Hardware_storeContext())
+            {
+                var cart = _db.Purchases.Where(p => p.CustomerId == id_customer);
+                foreach (Purchase user in cart)
+                {
+                    ListCart.Add(user);
+                    Console.WriteLine(ListCart);
+                }
+            }
+            
+            return ListCart;
         }
-
 
         public IActionResult AddToCart(int id)
         {
@@ -66,14 +77,14 @@ namespace PTLab_2.Controllers
         return RedirectToAction("Cart");
     }
         
-        public IActionResult Buy(int id, int quantity)
+        public IActionResult Buy2(int id, int quantity)
         {
-            Console.WriteLine(quantity);
             int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
             Product? item;
             item = _db.Products.FirstOrDefault(c => c.Id == id);
             var tmp = _db.Customers.FirstOrDefault(c => c.Id == Convert.ToInt32(id_customer)).Purchase;
             int discount = GetDiscount(tmp);
+            if (quantity < 0) quantity = 1;
             Purchase purchase = new Purchase
             {
                 CustomerId = id_customer,
@@ -85,7 +96,26 @@ namespace PTLab_2.Controllers
             _db.Purchases.Add(purchase);
             _db.SaveChanges();
         
-            return RedirectToAction("Purchase");
+            return RedirectToAction("Cart");
+        }
+        
+        public ActionResult BuyItem2(int id)
+        {
+            
+           int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
+           Customer customer = _db.Customers.FirstOrDefault(c => c.Id == id_customer);
+
+           Purchase purchase = _db.Purchases.FirstOrDefault(c => c.Id == id);
+            int tmp = purchase.Quantity;
+            if (purchase != null)
+            {
+                _db.Purchases.Remove(purchase);
+                _db.SaveChanges();
+            }
+            customer.Purchase += tmp;
+            _db.Customers.Update(customer);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
         }
         
         public IActionResult Login()
@@ -99,22 +129,6 @@ namespace PTLab_2.Controllers
             List<Purchase> purchase = new List<Purchase>();
             purchase.Add(res);
             return View(purchase);
-        }
-        public ActionResult BuyItem(int id)
-        {
-            Purchase purchase = _db.Purchases.FirstOrDefault(c => c.Id == id);
-            int tmp = purchase.Quantity;
-            if (purchase != null)
-            {
-                _db.Purchases.Remove(purchase);
-                _db.SaveChanges();
-            }
-            int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
-            Customer customer = _db.Customers.FirstOrDefault(c => c.Id == id_customer);
-            customer.Purchase += tmp;
-            _db.Customers.Update(customer);
-            _db.SaveChanges();
-            return RedirectToAction("Index");
         }
 
         [HttpPost]
