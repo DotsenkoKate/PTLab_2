@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<PTLab_2.Models.Product>
 @{
     ViewData["Title"] = "Каталог";
+    Layout = "_Layout";
 }
 
 <div class="text-center">
@@ -14,12 +15,12 @@
                 
                 <td>@item.Name</td>
                 <td>@item.Price</td>
-                <form action="Buy2">
-                    <td> <input type="hidden" name="id" value="@item.Id"/></td>
+                <form action="AddToCart">
                     <td><input type="number" size="2" name="quantity" min="1" max="100"></td>
                     <td>
                         <input type="submit" value="Добавить в корзину"/>
-                    </td>
+                    </td>   
+                    <td> <input type="hidden" name="id" value="@item.Id"/></td>
                 </form>
             </tr>
         }
