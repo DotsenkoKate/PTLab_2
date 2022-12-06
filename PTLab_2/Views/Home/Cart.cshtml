@@ -1,4 +1,4 @@
-@model IEnumerable<PTLab_2.Models.Purchase>
+@model IEnumerable<PTLab_2.Models.Cart>
 @{
     ViewData["Title"] = "Корзина";
     Layout = "_Layout";
@@ -27,7 +27,6 @@
                 <td id="result">@(@item.Quantity * @item.Price)</td>
             </tr>
             
-            <input type="hidden" name="id" value="@item.Id"/>
             <input type="hidden" id="discount" value="@item.Discount"/>
         }
         </tbody>

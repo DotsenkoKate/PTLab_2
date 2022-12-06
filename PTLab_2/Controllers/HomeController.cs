@@ -9,10 +9,10 @@ namespace PTLab_2.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private  Hardware_storeContext _db;
+        private  StoreContext _db;
         public HomeController(ILogger<HomeController> logger)
         {
-            _db = new Hardware_storeContext();
+            _db = new StoreContext();
             _logger = logger;
         }
 
@@ -23,25 +23,31 @@ namespace PTLab_2.Controllers
         public async Task<IActionResult> Cart()
         {
             int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
-            var result = _db.Purchases.Where(p => p.CustomerId == id_customer);
+            var result = from purchase in _db.Purchases
+                join customer in _db.Customers on purchase.CustomerId equals customer.Id
+                join product in _db.Products on purchase.ProductId equals product.Id
+                where (customer.Id == id_customer & product.Id == purchase.ProductId) 
+                select new Cart()
+                {
+                    Price = product.Price,
+                    ProductName = product.Name,
+                    Quantity = purchase.Quantity,
+                    Discount = GetDiscount(customer.Purchase)
+                };
+
             return View(await result.ToListAsync());
         }
         
         public IActionResult AddToCart(int id, int quantity)
         {
             int id_customer = Convert.ToInt32(HttpContext.Session.GetString("id"));
-            Product? item;
-            item = _db.Products.FirstOrDefault(c => c.Id == id);
-            var tmp = _db.Customers.FirstOrDefault(c => c.Id == Convert.ToInt32(id_customer)).Purchase;
-            int discount = GetDiscount(tmp);
             if (quantity <= 0) quantity = 1;
             Purchase purchase = new Purchase
             {
                 CustomerId = id_customer,
                 Quantity = quantity,
-                ProductName = item.Name,
-                Price = item.Price,
-                Discount = discount,
+                ProductId = id,
+
             };
             _db.Purchases.Add(purchase);
             _db.SaveChanges();
@@ -102,7 +108,7 @@ namespace PTLab_2.Controllers
         }
         
         //Функция подсчёта размера скидки
-        public int GetDiscount(int purchase)
+        public static int GetDiscount(int purchase)
         {
             int discount = purchase / 100;
             if (discount > 15) discount = 15;

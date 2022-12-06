@@ -74,7 +74,7 @@ namespace PTLab_2.Models
 
                 entity.Property(e => e.Discount)
                     .HasColumnType("int")
-                    .HasColumnName("Discount");
+                    .HasColumnName("discount");
                 entity.Property(e => e.Quantity)
                     .HasColumnType("int")
                     .HasColumnName("quantity");
