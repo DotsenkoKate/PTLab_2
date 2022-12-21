@@ -8,12 +8,10 @@ namespace PTLab_2.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private  StoreContext _db;
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController()
         {
             _db = new StoreContext();
-            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
@@ -87,7 +85,7 @@ namespace PTLab_2.Controllers
                 Customer? customer = _db.Customers.FirstOrDefault(c => c.Login == login);
                 if (customer.Password == password)
                 {
-                    HttpContext.Session.SetString("id",customer.Id.ToString());
+                    if (HttpContext != null) HttpContext.Session.SetString("id",customer.Id.ToString());
 
                     return RedirectToAction("Index", customer.Id);
                 }
@@ -110,7 +108,7 @@ namespace PTLab_2.Controllers
         //Функция подсчёта размера скидки
         public static int GetDiscount(int purchase)
         {
-            int discount = purchase / 100;
+            int discount = Math.Abs(purchase / 100);
             if (discount > 15) discount = 15;
             if (discount < 1) discount = 1;
             return discount;
