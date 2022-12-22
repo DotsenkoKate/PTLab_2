@@ -9,9 +9,9 @@ namespace PTLab_2.Controllers
     public class HomeController : Controller
     {
         private  StoreContext _db;
-        public HomeController()
+        public HomeController()//StoreContext context)
         {
-            _db = new StoreContext();
+            _db = new StoreContext(); //context
         }
 
         public async Task<IActionResult> Index()
